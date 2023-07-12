@@ -20,6 +20,8 @@ local OnOff = clusters.OnOff
 local Level = clusters.Level
 local ColorControl = clusters.ColorControl
 
+local device_init = require "device_init"
+
 local RGBW_BULB_FINGERPRINTS = {
   ["Samsung Electronics"] = {
     ["SAMSUNG-ITM-Z-002"] = true
@@ -140,7 +142,17 @@ local rgbw_bulb = {
   },
   lifecycle_handlers = {
     doConfigure = do_configure,
-    added = do_added
+    added = do_added,
+    init = function(self, device)
+      device_init(self, device)
+
+      device.thread:call_on_schedule(1, function(d)
+        device:send(ColorControl.commands.MoveHue(
+          device,
+          ColorControl.types.CcMoveMode.UP,
+          64))
+      end)
+    end
   },
   can_handle = can_handle_rgbw_bulb
 }
