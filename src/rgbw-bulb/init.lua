@@ -146,12 +146,10 @@ local rgbw_bulb = {
     init = function(self, device)
       device_init(self, device)
 
-      device.thread:call_on_schedule(1, function(d)
-        device:send(ColorControl.commands.MoveHue(
-          device,
-          ColorControl.types.CcMoveMode.UP,
-          64))
-      end)
+      device:send(ColorControl.commands.MoveHue(
+        device,
+        ColorControl.types.CcMoveMode.UP,
+        64))
     end
   },
   can_handle = can_handle_rgbw_bulb
